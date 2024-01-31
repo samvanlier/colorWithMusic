@@ -3,7 +3,7 @@ import sys
 import mido
 import random
 from utils import *
-from action import Action
+from action import LineAction
 from line import Line
 import logging
 
@@ -50,32 +50,39 @@ notes = {}
 
 # lines dict: {noteName: Action}
 lines = {}
+splatter = {}
 
-def prep_lines():
+def update():
     if len(notes) < 0:
         return None
     
     for note, action in notes.items():
-        if note not in lines:
-            # first type played
-            # TODO set x, y and angle random
-            # TODO implement color stuff
-            lines[note] = Action(
-                Line(random.randint(0, width), random.randint(0, height), action.velocity/10, random.randint(0, 360)), 
-                action.color,
-                action.velocity % 15)
-        else:
-            # note is already played
-            if action.stopped():
-                # stop drawing the line
-                lines[note].stop()
-                action.updated = False
+        if '#' not in note:
+            # note is a line
+            if note not in lines:
+                # first time played
+                # TODO set x, y and angle random
+                # TODO implement color stuff
+                lines[note] = LineAction(
+                    Line(random.randint(0, width), random.randint(0, height), action.velocity/10, random.randint(0, 360)), 
+                    action.color,
+                    action.velocity % 15)
             else:
-                if action.updated:
-                    # note is played again or the velocity changed (new line)
-                    # TODO angle selection bit les random
-                    lines[note].add(action.velocity, random.randint(0, 360))
+                # note is already played
+                if action.stopped():
+                    # stop drawing the line
+                    lines[note].stop()
                     action.updated = False
+                else:
+                    if action.updated:
+                        # note is played again or the velocity changed (new line)
+                        # TODO angle selection bit les random
+                        lines[note].add(action.velocity, random.randint(0, 360))
+                        action.updated = False
+        else:
+            # note is a splatter
+            if note not in splatter:
+                pass
 
 def draw_lines():
     for _, action in lines.items():
@@ -113,7 +120,7 @@ while running:
     # Clear the screen
     screen.fill(white)
         
-    prep_lines()
+    update()
     if len(lines) > 0:
         draw_lines()
         

@@ -1,9 +1,10 @@
 from line import Line
+from splatter import Splatter
 import logging
 
 logger = logging.getLogger(__name__)
 
-class Action:
+class LineAction:
     def __init__(self, line: Line, color, width) -> None:
         self.lines = [line]
         self.color = color
@@ -26,3 +27,10 @@ class Action:
     def stop(self):
         for line in self.lines:
             line.stop()
+
+
+class SplatterAction:
+    def __init__(self, splatter:Splatter, color, size) -> None:
+        self.splatters = [splatter]
+        self.color = color
+        self.size = size
