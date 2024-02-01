@@ -7,7 +7,7 @@ class Line:
         self.end_x = start_x
         self.start_y = start_y
         self.end_y = start_y
-        self.velocity = velocity 
+        self.velocity = int(velocity)
         # TODO make angle psuedo random?
         self.angle = math.radians(angle)
         self.stopped = False
@@ -37,7 +37,7 @@ class Line:
     def draw(self, screen, color):
         start = (self.start_x, self.start_y)
         end = (self.end_x, self.end_y)
-        pygame.draw.line(screen, color, start, end, int(self.velocity))
+        pygame.draw.line(screen, color, start, end, self.velocity)
     
     def stop(self):
         self.stopped = True

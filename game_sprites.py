@@ -58,29 +58,40 @@ def update():
         return None
     
     for note, action in notes.items():
-        if note not in lines:
-            # first time played
-            # TODO set x, y and angle random
-            # TODO implement color stuff
-            lines[note] = LineAction(
-                Line(
-                    random.randint(0, width), 
-                    random.randint(0, height), 
-                    action.velocity/3, 
-                    random.randint(0, 360)), 
-                action.color,
-                action.velocity)
-        else:
-            # note is already played
-            if action.stopped():
-                # stop drawing the line
-                lines[note].stop()
-                action.updated = False
+        if '#' not in note:
+            # note is a line
+            if note not in lines:
+                # first time played
+                # TODO set x, y and angle random
+                # TODO implement color stuff
+                lines[note] = LineAction(
+                    Line(
+                        random.randint(0, width), 
+                        random.randint(0, height), 
+                        action.velocity/5, 
+                        random.randint(0, 360)), 
+                    action.color,
+                    action.velocity)
             else:
-                if action.updated:
-                    # note is played again or the velocity changed (new line)
-                    # TODO angle selection bit les random
-                    lines[note].add(action.velocity, random.randint(0, 360))
+                # note is already played
+                if action.stopped():
+                    # stop drawing the line
+                    lines[note].stop()
+                    action.updated = False
+                else:
+                    if action.updated:
+                        # note is played again or the velocity changed (new line)
+                        # TODO angle selection bit les random
+                        lines[note].add(action.velocity, random.randint(0, 360))
+                        action.updated = False
+        else:
+            sprite_image = pygame.image.load(get_sprite(note))
+            sprite = Splatter(sprite_image, random.randint(0, width), random.randint(0, height), action.color, scale(action.velocity))
+            if note not in splatters:
+                splatters[note] = SplatterAction(sprite)
+                action.updated = False
+            if action.updated:
+                    splatters[note].add(sprite)
                     action.updated = False
 
 def draw_lines():
@@ -139,7 +150,7 @@ while running:
     pygame.display.flip()
 
     # Cap the frame rate
-    clock.tick(60)
+    clock.tick(10)
 
 # Quit Pygame
 input_port.close()
