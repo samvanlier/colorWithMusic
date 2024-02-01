@@ -22,7 +22,7 @@ class LineAction:
             if not line.stopped:
                 line.update(width, height)
                 
-            line.draw(screen, self.color, self.width)
+            line.draw(screen, self.color)
             
     def stop(self):
         for line in self.lines:
@@ -30,7 +30,12 @@ class LineAction:
 
 
 class SplatterAction:
-    def __init__(self, splatter:Splatter, color, size) -> None:
+    def __init__(self, splatter:Splatter) -> None:
         self.splatters = [splatter]
-        self.color = color
-        self.size = size
+        
+    def add(self, splatter):
+        self.splatters.append(splatter)
+        
+    def update(self, screen):
+        for splatter in self.splatters:
+            splatter.draw(screen)

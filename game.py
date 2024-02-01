@@ -3,8 +3,9 @@ import sys
 import mido
 import random
 from utils import *
-from action import LineAction
+from action import LineAction, SplatterAction
 from line import Line
+from splatter import Splatter
 import logging
 
 class NoteAction: 
@@ -50,7 +51,7 @@ notes = {}
 
 # lines dict: {noteName: Action}
 lines = {}
-splatter = {}
+splatters = {}
 
 def update():
     if len(notes) < 0:
@@ -64,9 +65,13 @@ def update():
                 # TODO set x, y and angle random
                 # TODO implement color stuff
                 lines[note] = LineAction(
-                    Line(random.randint(0, width), random.randint(0, height), action.velocity/10, random.randint(0, 360)), 
+                    Line(
+                        random.randint(0, width), 
+                        random.randint(0, height), 
+                        action.velocity/5, 
+                        random.randint(0, 360)), 
                     action.color,
-                    action.velocity % 15)
+                    action.velocity)
             else:
                 # note is already played
                 if action.stopped():
@@ -80,13 +85,28 @@ def update():
                         lines[note].add(action.velocity, random.randint(0, 360))
                         action.updated = False
         else:
-            # note is a splatter
-            if note not in splatter:
-                pass
+            sprite_image = pygame.image.load(get_sprite(note))
+            sprite = Splatter(sprite_image, random.randint(0, width), random.randint(0, height), action.color, scale(action.velocity))
+            if note not in splatters:
+                splatters[note] = SplatterAction(sprite)
+                action.updated = False
+            if action.updated:
+                    splatters[note].add(sprite)
+                    action.updated = False
 
 def draw_lines():
+    if len(lines) < 0:
+        return
+    
     for _, action in lines.items():
         action.update(screen, width, height)
+        
+def draw_splatters():
+    if len(splatters) < 0:
+        return
+    
+    for _, action in splatters.items():
+        action.update(screen)
 
 def update_action(note_number, velocity):
     color = generate_color(note_number, velocity)
@@ -123,13 +143,14 @@ while running:
     update()
     if len(lines) > 0:
         draw_lines()
+    draw_splatters()
         
     # screen.blit(surface, (0,0))
     # Update the display
     pygame.display.flip()
 
     # Cap the frame rate
-    clock.tick(60)
+    clock.tick(10)
 
 # Quit Pygame
 input_port.close()

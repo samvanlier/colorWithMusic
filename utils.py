@@ -6,7 +6,18 @@ colors = {
     "E": [255, 140, 0],
     "F": [180, 230, 0],
     "G": [15, 255, 219]
-} 
+}
+
+sprites = {
+    "C#": "./sprites/sprite1.png",
+    "D#": "./sprites/sprite2.png",
+    "F#": "./sprites/sprite3.png",
+    "G#": "./sprites/sprite4.png",
+    "A#": "./sprites/sprite5.png"
+}
+
+def get_sprite(note):
+    return sprites[note]
 
 
 def midi_note_to_name(note_number):
@@ -50,3 +61,8 @@ def velocity_as_alpha(velocity):
     
     # Scale the MIDI velocity to the range 0-255
     return int((velocity / 127) * 255)
+
+def scale(velocity):
+    velocity =  max(0, min(127, velocity))
+    
+    return (velocity / 127) * 2

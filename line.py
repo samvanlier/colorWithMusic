@@ -34,10 +34,10 @@ class Line:
                 self.end_x = max(0, self.end_x)
                 self.end_y = max(0, self.end_y)
                 
-    def draw(self, screen, color, line_thickness):
+    def draw(self, screen, color):
         start = (self.start_x, self.start_y)
         end = (self.end_x, self.end_y)
-        pygame.draw.line(screen, color, start, end, line_thickness)
+        pygame.draw.line(screen, color, start, end, int(self.velocity))
     
     def stop(self):
         self.stopped = True
