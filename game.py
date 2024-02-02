@@ -3,9 +3,8 @@ import sys
 import mido
 import random
 from utils import *
-from action import LineAction, SplatterAction
+from action import LineAction
 from line import Line
-from splatter import Splatter
 import logging
 
 class NoteAction: 
@@ -120,7 +119,7 @@ input_port = mido.open_input(keyboard_name, callback=on_midi_message)
 
 # Main game loop
 running = True
-random.seed(1)
+# random.seed(1)
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
